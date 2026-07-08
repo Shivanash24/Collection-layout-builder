@@ -40,6 +40,10 @@ export default function Templates() {
 
   const categories = ["All", "Free", "Starter", "Professional", "Premium"];
 
+  const filteredTemplates = activeCategory === "All" 
+    ? templates 
+    : templates.filter(t => t.category === activeCategory);
+
   const isTemplateLocked = (category: string) => {
     // Free templates are always unlocked for everyone
     if (category === "Free") return false;
