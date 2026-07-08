@@ -10,7 +10,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const storeSettings = await prisma.storeSettings.findUnique({
     where: { shop: session.shop }
   });
-  return json({ activeTemplateId: storeSettings?.templateId || "1" });
+  return json({ 
+    activeTemplateId: storeSettings?.templateId || "1",
+    activePlan: storeSettings?.activePlan || "Free"
+  });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -29,7 +32,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function Templates() {
-  const { activeTemplateId } = useLoaderData<typeof loader>();
+  const { activeTemplateId, activePlan } = useLoaderData<typeof loader>();
   const [activeCategory, setActiveCategory] = useState("All");
   const [previewTemplate, setPreviewTemplate] = useState<any>(null);
   const navigate = useNavigate();
@@ -66,12 +69,92 @@ export default function Templates() {
     navigate(`/app/customize?template=${template.id}`);
   };
 
+  const isTemplateLocked = (category: string) => {
+    if (activePlan === "Premium") return false;
+    if (activePlan === "Professional" && category !== "Premium") return false;
+    if (activePlan === "Starter" && (category === "Free" || category === "Starter")) return false;
+    if (activePlan === "Free" && category === "Free") return false;
+    return true;
+  };
+
+  const mockProducts = [1, 2, 3, 4, 5, 6];
+
+  const renderPreviewDesign = (template: any) => {
+    const templateId = template.id;
+    const cardRadius = 14;
+    const shadowStyle = "0 10px 15px -3px rgba(0, 0, 0, 0.1)";
+
+    return (
+      <div style={{ width: '100%', padding: '32px' }}>
+        {/* Design 1: Classic Grid */}
+        {(templateId === "1" || templateId === "2" || templateId === "3" || Number(templateId) > 9) && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
+            {mockProducts.map((item) => (
+              <div key={item} style={{ backgroundColor: 'white', borderRadius: `${cardRadius}px`, boxShadow: shadowStyle, overflow: 'hidden' }}>
+                <div style={{ height: '200px', background: template.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700 }}>Image</div>
+                <div style={{ padding: '20px', textAlign: 'center' }}>
+                  <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 600, color: 'black' }}>{template.name} Style {item}</h3>
+                  <p style={{ margin: '0 0 16px 0', color: 'var(--color-secondary-text)', fontWeight: 500 }}>$59.00</p>
+                  <button style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--color-primary)', backgroundColor: 'transparent', color: 'var(--color-primary)', fontWeight: 600 }}>Quick Add</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Design 2: Split Layout */}
+        {(templateId === "4" || templateId === "5" || templateId === "6") && (
+          <div style={{ display: 'flex', gap: '32px' }}>
+            <div style={{ flex: 1, borderRadius: `${cardRadius}px`, background: template.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '32px', fontWeight: 800 }}>
+              New Arrivals
+            </div>
+            <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              {mockProducts.slice(0, 4).map((item) => (
+                <div key={item} style={{ backgroundColor: 'white', borderRadius: `${cardRadius}px`, boxShadow: shadowStyle, padding: '16px', display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ height: '120px', backgroundColor: '#e9ecef', borderRadius: `${cardRadius - 4}px`, marginBottom: '12px' }}></div>
+                  <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: 600, color: 'black' }}>Split Edition {item}</h4>
+                  <p style={{ margin: '0 0 12px 0', color: 'var(--color-secondary-text)', fontSize: '12px' }}>$89.99</p>
+                  <button style={{ marginTop: 'auto', width: '100%', padding: '6px', borderRadius: '4px', border: 'none', backgroundColor: 'var(--color-primary)', color: 'white', fontSize: '12px', fontWeight: 600 }}>Buy Now</button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Design 3: Lookbook */}
+        {(templateId === "7" || templateId === "8" || templateId === "9") && (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+            {mockProducts.map((item, index) => (
+              <div key={item} style={{ 
+                position: 'relative',
+                borderRadius: `${cardRadius}px`, 
+                boxShadow: shadowStyle, 
+                overflow: 'hidden',
+                gridRow: index % 3 === 0 ? 'span 2' : 'span 1',
+                height: index % 3 === 0 ? '450px' : '217px',
+                background: template.gradient
+              }}>
+                <div style={{ position: 'absolute', bottom: '16px', left: '16px', right: '16px', backgroundColor: 'white', padding: '16px', borderRadius: `${cardRadius - 4}px`, boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
+                  <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: 700, color: 'black' }}>Lookbook {item}</h4>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ color: 'var(--color-secondary-text)', fontSize: '13px' }}>$120.00</span>
+                    <button style={{ background: 'black', color: 'white', border: 'none', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', cursor: 'pointer' }}>Add</button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
         <div>
           <h2 style={{ fontSize: '24px', fontWeight: 700, margin: '0 0 8px 0' }}>Collection Templates</h2>
-          <p style={{ color: 'var(--color-secondary-text)', margin: 0 }}>Choose from 15 premium layouts to get started quickly.</p>
+          <p style={{ color: 'var(--color-secondary-text)', margin: 0 }}>Choose from 15 premium layouts. You are on the <strong>{activePlan}</strong> plan.</p>
         </div>
         <div style={{ position: 'relative' }}>
           <input 
@@ -113,56 +196,80 @@ export default function Templates() {
 
         {/* Templates Grid */}
         <div style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
-          {filteredTemplates.map((template) => (
-            <div key={template.id} className="premium-card" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column', border: activeTemplateId === template.id ? '2px solid var(--color-primary)' : 'none' }}>
-              <div style={{ 
-                height: '180px', 
-                background: template.gradient,
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white',
-                fontSize: '24px',
-                fontWeight: 800,
-                textShadow: '0 2px 4px rgba(0,0,0,0.3)'
-              }}>
-                {template.name.charAt(0)}
-                <div style={{
-                  position: 'absolute',
-                  top: '12px',
-                  right: '12px',
-                  backgroundColor: 'white',
-                  padding: '4px 10px',
-                  borderRadius: '20px',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                  color: 'black'
+          {filteredTemplates.map((template) => {
+            const isLocked = isTemplateLocked(template.category);
+            return (
+              <div key={template.id} className="premium-card" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column', border: activeTemplateId === template.id ? '2px solid var(--color-primary)' : 'none', opacity: isLocked ? 0.75 : 1 }}>
+                <div style={{ 
+                  height: '180px', 
+                  background: template.gradient,
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: '24px',
+                  fontWeight: 800,
+                  textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                  filter: isLocked ? 'grayscale(80%)' : 'none'
                 }}>
-                  {template.category}
+                  {template.name.charAt(0)}
+                  <div style={{
+                    position: 'absolute',
+                    top: '12px',
+                    right: '12px',
+                    backgroundColor: isLocked ? '#f1f5f9' : 'white',
+                    padding: '4px 10px',
+                    borderRadius: '20px',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                    color: isLocked ? '#64748b' : 'black',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}>
+                    {isLocked && (
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
+                    )}
+                    {template.category}
+                  </div>
+                </div>
+                <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', fontWeight: 600 }}>{template.name}</h3>
+                  <div style={{ marginTop: 'auto', display: 'flex', gap: '8px' }}>
+                    {isLocked ? (
+                      <button 
+                        onClick={() => navigate("/app/billing")}
+                        className="premium-button" 
+                        style={{ flex: 1, backgroundColor: '#f1f5f9', color: '#64748b', border: '1px solid #cbd5e1' }}
+                      >
+                        Upgrade to Unlock
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={() => handleUseTemplate(template)}
+                        className="premium-button" 
+                        style={{ flex: 1, backgroundColor: activeTemplateId === template.id ? 'transparent' : 'var(--color-primary)', color: activeTemplateId === template.id ? 'var(--color-primary)' : 'white', border: activeTemplateId === template.id ? '1px solid var(--color-primary)' : 'none' }}
+                      >
+                        {activeTemplateId === template.id ? 'Current' : 'Use Template'}
+                      </button>
+                    )}
+                    
+                    <button 
+                      onClick={() => setPreviewTemplate(template)}
+                      style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--color-border)', backgroundColor: 'transparent', cursor: 'pointer' }}
+                    >
+                      Preview
+                    </button>
+                  </div>
                 </div>
               </div>
-              <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', fontWeight: 600 }}>{template.name}</h3>
-                <div style={{ marginTop: 'auto', display: 'flex', gap: '8px' }}>
-                  <button 
-                    onClick={() => handleUseTemplate(template)}
-                    className="premium-button" 
-                    style={{ flex: 1, backgroundColor: activeTemplateId === template.id ? 'transparent' : 'var(--color-primary)', color: activeTemplateId === template.id ? 'var(--color-primary)' : 'white', border: activeTemplateId === template.id ? '1px solid var(--color-primary)' : 'none' }}
-                  >
-                    {activeTemplateId === template.id ? 'Current' : 'Use Template'}
-                  </button>
-                  <button 
-                    onClick={() => setPreviewTemplate(template)}
-                    style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--color-border)', backgroundColor: 'transparent', cursor: 'pointer' }}
-                  >
-                    Preview
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -170,26 +277,48 @@ export default function Templates() {
       {previewTemplate && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 100,
+          backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 100,
           display: 'flex', alignItems: 'center', justifyContent: 'center'
         }}>
-          <div className="premium-card" style={{ width: '80%', maxWidth: '900px', height: '80vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '24px', borderBottom: '1px solid var(--color-border)' }}>
-              <h2 style={{ margin: 0, fontSize: '20px' }}>Previewing: {previewTemplate.name}</h2>
+          <div className="premium-card" style={{ width: '90%', maxWidth: '1100px', height: '85vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', backgroundColor: '#f1f5f9' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '24px', backgroundColor: 'white', borderBottom: '1px solid var(--color-border)' }}>
+              <div>
+                <h2 style={{ margin: 0, fontSize: '20px' }}>Previewing: {previewTemplate.name}</h2>
+                <p style={{ margin: '4px 0 0 0', color: 'var(--color-secondary-text)', fontSize: '14px' }}>{previewTemplate.category} Plan Template</p>
+              </div>
               <button onClick={() => setPreviewTemplate(null)} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer' }}>&times;</button>
             </div>
-            <div style={{ flex: 1, background: previewTemplate.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '48px', fontWeight: 800, textShadow: '0 4px 8px rgba(0,0,0,0.3)' }}>
-              {previewTemplate.name} Layout Showcase
+            
+            {/* The actual design rendering area */}
+            <div style={{ flex: 1, overflowY: 'auto', display: 'flex', justifyContent: 'center' }}>
+               <div style={{ width: '100%', maxWidth: '1000px' }}>
+                 {renderPreviewDesign(previewTemplate)}
+               </div>
             </div>
-            <div style={{ padding: '24px', borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'flex-end', gap: '16px' }}>
+
+            <div style={{ padding: '24px', backgroundColor: 'white', borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'flex-end', gap: '16px' }}>
               <button onClick={() => setPreviewTemplate(null)} style={{ padding: '12px 24px', borderRadius: '8px', border: '1px solid var(--color-border)', backgroundColor: 'transparent', cursor: 'pointer', fontWeight: 600 }}>Close Preview</button>
-              <button 
-                onClick={() => handleUseTemplate(previewTemplate)}
-                className="premium-button"
-                style={{ padding: '12px 24px' }}
-              >
-                Use This Template
-              </button>
+              
+              {isTemplateLocked(previewTemplate.category) ? (
+                <button 
+                  onClick={() => navigate("/app/billing")}
+                  className="premium-button"
+                  style={{ padding: '12px 24px', backgroundColor: '#475569' }}
+                >
+                  Upgrade to Unlock This Template
+                </button>
+              ) : (
+                <button 
+                  onClick={() => {
+                    handleUseTemplate(previewTemplate);
+                    setPreviewTemplate(null);
+                  }}
+                  className="premium-button"
+                  style={{ padding: '12px 24px' }}
+                >
+                  Use This Template
+                </button>
+              )}
             </div>
           </div>
         </div>
