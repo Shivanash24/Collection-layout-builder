@@ -10,8 +10,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const storeSettings = await prisma.storeSettings.findUnique({
     where: { shop: session.shop }
   });
-  
-  return json({ storeSettings: storeSettings || {} });
+  return json({ storeSettings: storeSettings || {
+    templateId: "1",
+    activePlan: "Free",
+    productsPerRow: 3,
+    cardRadius: 14,
+    cardShadow: "Medium",
+    containerWidth: "Standard (1200px)",
+    hoverAnimation: "None"
+  } });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
