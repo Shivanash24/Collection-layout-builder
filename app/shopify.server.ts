@@ -15,19 +15,25 @@ export const PLAN_PREMIUM = "Premium Plan";
 const shopify = shopifyApp({
   billing: {
     [PLAN_STARTER]: {
-      amount: 39.0,
-      currencyCode: "USD",
-      interval: BillingInterval.Every30Days,
+      lineItems: [{
+        amount: 39.0,
+        currencyCode: "USD",
+        interval: BillingInterval.Every30Days,
+      }]
     },
     [PLAN_PROFESSIONAL]: {
-      amount: 49.0,
-      currencyCode: "USD",
-      interval: BillingInterval.Every30Days,
+      lineItems: [{
+        amount: 49.0,
+        currencyCode: "USD",
+        interval: BillingInterval.Every30Days,
+      }]
     },
     [PLAN_PREMIUM]: {
-      amount: 89.0,
-      currencyCode: "USD",
-      interval: BillingInterval.Every30Days,
+      lineItems: [{
+        amount: 89.0,
+        currencyCode: "USD",
+        interval: BillingInterval.Every30Days,
+      }]
     }
   },
   apiKey: process.env.SHOPIFY_API_KEY,
