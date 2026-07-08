@@ -70,10 +70,16 @@ export default function Templates() {
   };
 
   const isTemplateLocked = (category: string) => {
-    if (activePlan === "Premium") return false;
-    if (activePlan === "Professional" && category !== "Premium") return false;
-    if (activePlan === "Starter" && (category === "Free" || category === "Starter")) return false;
-    if (activePlan === "Free" && category === "Free") return false;
+    // Free templates are always unlocked for everyone
+    if (category === "Free") return false;
+
+    // Normalize plan name (e.g., "Starter Plan" -> "Starter")
+    const currentPlan = activePlan.replace(" Plan", "");
+
+    if (currentPlan === "Premium") return false;
+    if (currentPlan === "Professional" && category !== "Premium") return false;
+    if (currentPlan === "Starter" && category === "Starter") return false;
+    
     return true;
   };
 
