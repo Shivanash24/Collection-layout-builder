@@ -4,6 +4,7 @@ import { useLoaderData, useNavigate, Form } from "@remix-run/react";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
 import prisma from "../db.server";
+import { TemplateRenderer } from "../components/TemplateRenderer";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { session } = await authenticate.admin(request);
@@ -78,75 +79,7 @@ export default function Templates() {
 
   const mockProducts = [1, 2, 3, 4, 5, 6];
 
-  const renderPreviewDesign = (template: any) => {
-    const templateId = template.id;
-    const cardRadius = 14;
-    const shadowStyle = "0 10px 15px -3px rgba(0, 0, 0, 0.1)";
-
-    return (
-      <div style={{ width: '100%', padding: '32px' }}>
-        {/* Design 1: Classic Grid */}
-        {(templateId === "1" || templateId === "2" || templateId === "3" || Number(templateId) > 9) && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
-            {mockProducts.map((item) => (
-              <div key={item} style={{ backgroundColor: 'white', borderRadius: `${cardRadius}px`, boxShadow: shadowStyle, overflow: 'hidden' }}>
-                <div style={{ height: '200px', background: template.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700 }}>Image</div>
-                <div style={{ padding: '20px', textAlign: 'center' }}>
-                  <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 600, color: 'black' }}>{template.name} Style {item}</h3>
-                  <p style={{ margin: '0 0 16px 0', color: 'var(--color-secondary-text)', fontWeight: 500 }}>$59.00</p>
-                  <button style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--color-primary)', backgroundColor: 'transparent', color: 'var(--color-primary)', fontWeight: 600 }}>Quick Add</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Design 2: Split Layout */}
-        {(templateId === "4" || templateId === "5" || templateId === "6") && (
-          <div style={{ display: 'flex', gap: '32px' }}>
-            <div style={{ flex: 1, borderRadius: `${cardRadius}px`, background: template.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '32px', fontWeight: 800 }}>
-              New Arrivals
-            </div>
-            <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              {mockProducts.slice(0, 4).map((item) => (
-                <div key={item} style={{ backgroundColor: 'white', borderRadius: `${cardRadius}px`, boxShadow: shadowStyle, padding: '16px', display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ height: '120px', backgroundColor: '#e9ecef', borderRadius: `${cardRadius - 4}px`, marginBottom: '12px' }}></div>
-                  <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: 600, color: 'black' }}>Split Edition {item}</h4>
-                  <p style={{ margin: '0 0 12px 0', color: 'var(--color-secondary-text)', fontSize: '12px' }}>$89.99</p>
-                  <button style={{ marginTop: 'auto', width: '100%', padding: '6px', borderRadius: '4px', border: 'none', backgroundColor: 'var(--color-primary)', color: 'white', fontSize: '12px', fontWeight: 600 }}>Buy Now</button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Design 3: Lookbook */}
-        {(templateId === "7" || templateId === "8" || templateId === "9") && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
-            {mockProducts.map((item, index) => (
-              <div key={item} style={{ 
-                position: 'relative',
-                borderRadius: `${cardRadius}px`, 
-                boxShadow: shadowStyle, 
-                overflow: 'hidden',
-                gridRow: index % 3 === 0 ? 'span 2' : 'span 1',
-                height: index % 3 === 0 ? '450px' : '217px',
-                background: template.gradient
-              }}>
-                <div style={{ position: 'absolute', bottom: '16px', left: '16px', right: '16px', backgroundColor: 'white', padding: '16px', borderRadius: `${cardRadius - 4}px`, boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-                  <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: 700, color: 'black' }}>Lookbook {item}</h4>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ color: 'var(--color-secondary-text)', fontSize: '13px' }}>$120.00</span>
-                    <button style={{ background: 'black', color: 'white', border: 'none', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', cursor: 'pointer' }}>Add</button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  };
+  // Template rendering is now handled by TemplateRenderer component
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
@@ -295,7 +228,12 @@ export default function Templates() {
             {/* The actual design rendering area */}
             <div style={{ flex: 1, overflowY: 'auto', display: 'flex', justifyContent: 'center' }}>
                <div style={{ width: '100%', maxWidth: '1000px' }}>
-                 {renderPreviewDesign(previewTemplate)}
+                 <TemplateRenderer 
+                   template={previewTemplate}
+                   mockProducts={mockProducts}
+                   cardRadius={14}
+                   cardShadow={"Medium"}
+                 />
                </div>
             </div>
 
