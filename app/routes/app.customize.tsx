@@ -1,23 +1,66 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "@remix-run/react";
+import { json, type ActionFunctionArgs, type LoaderFunctionArgs } from "@remix-run/node";
+import { useLoaderData, useSearchParams, Form, useSubmit } from "@remix-run/react";
 import { useAppBridge } from "@shopify/app-bridge-react";
+import { authenticate } from "../shopify.server";
+import prisma from "../db.server";
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const { session } = await authenticate.admin(request);
+  const storeSettings = await prisma.storeSettings.findUnique({
+    where: { shop: session.shop }
+  });
+  
+  return json({ storeSettings: storeSettings || {} });
+};
+
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const { session } = await authenticate.admin(request);
+  const formData = await request.formData();
+  
+  const productsPerRow = Number(formData.get("productsPerRow"));
+  const containerWidth = formData.get("containerWidth") as string;
+  const cardRadius = Number(formData.get("cardRadius"));
+  const cardShadow = formData.get("cardShadow") as string;
+  const hoverAnimation = formData.get("hoverAnimation") as string;
+
+  await prisma.storeSettings.upsert({
+    where: { shop: session.shop },
+    create: { shop: session.shop, productsPerRow, containerWidth, cardRadius, cardShadow, hoverAnimation },
+    update: { productsPerRow, containerWidth, cardRadius, cardShadow, hoverAnimation }
+  });
+
+  return json({ success: true });
+};
 
 export default function Customize() {
+  const { storeSettings } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
-  const templateId = searchParams.get("template") || "1";
+  const templateId = searchParams.get("template") || storeSettings.templateId || "1";
   
-  // Mock current plan from database
-  const currentPlan = "Starter"; // Options: "Starter", "Professional", "Premium"
+  const currentPlan = storeSettings.activePlan || "Free";
 
   const [device, setDevice] = useState("Desktop");
-  const [productsPerRow, setProductsPerRow] = useState(3);
-  const [cardRadius, setCardRadius] = useState(14);
-  const [cardShadow, setCardShadow] = useState("Medium");
-  const [containerWidth, setContainerWidth] = useState("Standard (1200px)");
-  const [hoverAnimation, setHoverAnimation] = useState("None");
+  const [productsPerRow, setProductsPerRow] = useState(storeSettings.productsPerRow || 3);
+  const [cardRadius, setCardRadius] = useState(storeSettings.cardRadius || 14);
+  const [cardShadow, setCardShadow] = useState(storeSettings.cardShadow || "Medium");
+  const [containerWidth, setContainerWidth] = useState(storeSettings.containerWidth || "Standard (1200px)");
+  const [hoverAnimation, setHoverAnimation] = useState(storeSettings.hoverAnimation || "None");
   
   const shopify = useAppBridge();
+  const submit = useSubmit();
   const mockProducts = [1, 2, 3, 4, 5, 6];
+
+  const handleSave = () => {
+    submit({
+      productsPerRow: String(productsPerRow),
+      containerWidth,
+      cardRadius: String(cardRadius),
+      cardShadow,
+      hoverAnimation
+    }, { method: "post" });
+    shopify.toast.show("Layout settings saved successfully!");
+  };
 
   const getShadowStyle = () => {
     switch (cardShadow) {
@@ -121,7 +164,7 @@ export default function Customize() {
         </div>
 
         <button 
-          onClick={() => shopify.toast.show("Layout settings saved successfully!")}
+          onClick={handleSave}
           className="premium-button" 
           style={{ width: '100%' }}
         >

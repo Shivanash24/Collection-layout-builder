@@ -2,12 +2,34 @@ import "@shopify/shopify-app-remix/adapters/node";
 import {
   ApiVersion,
   AppDistribution,
+  BillingInterval,
   shopifyApp,
 } from "@shopify/shopify-app-remix/server";
 import { PrismaSessionStorage } from "@shopify/shopify-app-session-storage-prisma";
 import prisma from "./db.server";
 
+export const PLAN_STARTER = "Starter Plan";
+export const PLAN_PROFESSIONAL = "Professional Plan";
+export const PLAN_PREMIUM = "Premium Plan";
+
 const shopify = shopifyApp({
+  billing: {
+    [PLAN_STARTER]: {
+      amount: 39.0,
+      currencyCode: "USD",
+      interval: BillingInterval.Every30Days,
+    },
+    [PLAN_PROFESSIONAL]: {
+      amount: 49.0,
+      currencyCode: "USD",
+      interval: BillingInterval.Every30Days,
+    },
+    [PLAN_PREMIUM]: {
+      amount: 89.0,
+      currencyCode: "USD",
+      interval: BillingInterval.Every30Days,
+    }
+  },
   apiKey: process.env.SHOPIFY_API_KEY,
   apiSecretKey: process.env.SHOPIFY_API_SECRET || "",
   apiVersion: ApiVersion.January25,

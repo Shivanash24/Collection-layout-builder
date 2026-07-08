@@ -1,7 +1,47 @@
-import { useAppBridge } from "@shopify/app-bridge-react";
+import { json, type ActionFunctionArgs, type LoaderFunctionArgs } from "@remix-run/node";
+import { useSubmit, Form } from "@remix-run/react";
+import { authenticate, PLAN_STARTER, PLAN_PROFESSIONAL, PLAN_PREMIUM } from "../shopify.server";
+import prisma from "../db.server";
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  await authenticate.admin(request);
+  return json({});
+};
+
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const { billing, session } = await authenticate.admin(request);
+  const formData = await request.formData();
+  const planName = formData.get("plan") as string;
+
+  let targetPlan = "";
+  if (planName === "Starter") targetPlan = PLAN_STARTER;
+  if (planName === "Professional") targetPlan = PLAN_PROFESSIONAL;
+  if (planName === "Premium") targetPlan = PLAN_PREMIUM;
+
+  if (targetPlan) {
+    await billing.require({
+      plans: [targetPlan],
+      isTest: true,
+      onFailure: async () => billing.request({
+        plan: targetPlan,
+        isTest: true,
+        returnUrl: `https://${session.shop}/admin/apps/collection-layout-builder/app/billing`
+      }),
+    });
+  } else if (planName === "Free") {
+    // Optionally handle downgrade to free plan
+    await prisma.storeSettings.upsert({
+      where: { shop: session.shop },
+      create: { shop: session.shop, activePlan: "Free" },
+      update: { activePlan: "Free" }
+    });
+  }
+
+  return null;
+};
 
 export default function Pricing() {
-  const shopify = useAppBridge();
+  const submit = useSubmit();
   const plans = [
     {
       name: "Free",
@@ -91,24 +131,28 @@ export default function Pricing() {
                 </li>
               ))}
             </ul>
-
-            <button 
-              onClick={() => shopify.toast.show(plan.popular ? "Redirecting to checkout..." : `Selected ${plan.name} plan`)}
-              className="premium-button" 
-              style={{ 
-                width: '100%', 
-                padding: '12px', 
-                fontSize: '16px',
-                backgroundColor: plan.popular ? 'var(--color-primary)' : 'transparent',
-                color: plan.popular ? 'white' : 'var(--color-primary)',
-                border: plan.popular ? 'none' : '1px solid var(--color-primary)'
-              }}
-            >
-              {plan.popular ? 'Upgrade Now' : 'Choose Plan'}
-            </button>
+            
+            <Form method="post">
+              <input type="hidden" name="plan" value={plan.name} />
+              <button 
+                type="submit"
+                className="premium-button" 
+                style={{ 
+                  width: '100%', 
+                  padding: '12px', 
+                  fontSize: '16px',
+                  backgroundColor: plan.popular ? 'var(--color-primary)' : 'transparent',
+                  color: plan.popular ? 'white' : 'var(--color-primary)',
+                  border: plan.popular ? 'none' : '1px solid var(--color-primary)'
+                }}
+              >
+                {plan.popular ? 'Upgrade Now' : 'Choose Plan'}
+              </button>
+            </Form>
           </div>
         ))}
       </div>
     </div>
   );
 }
+
