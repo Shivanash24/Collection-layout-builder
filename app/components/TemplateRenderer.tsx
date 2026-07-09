@@ -60,7 +60,7 @@ export function TemplateRenderer({
       {templateId === "2" && (
         <div style={{ display: 'grid', gridTemplateColumns: gridColumns, gap: '32px' }}>
           {mockProducts.map((item) => (
-            <div key={item} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div key={item} className={hoverClass} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div style={{ height: '320px', background: template.gradient, borderRadius: `${cardRadius}px`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 600, fontSize: '20px' }}></div>
               <div style={{ padding: '0 8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
@@ -80,7 +80,7 @@ export function TemplateRenderer({
       {templateId === "3" && (
         <div style={{ display: 'grid', gridTemplateColumns: gridColumns, gap: '16px' }}>
           {mockProducts.map((item) => (
-            <div key={item} style={{ position: 'relative', height: '380px', borderRadius: `${cardRadius}px`, overflow: 'hidden', boxShadow: shadowStyle }}>
+            <div key={item} className={hoverClass} style={{ position: 'relative', height: '380px', borderRadius: `${cardRadius}px`, overflow: 'hidden', boxShadow: shadowStyle, border: borderStyle }}>
               <div style={{ position: 'absolute', inset: 0, background: template.gradient }}></div>
               <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%)' }}></div>
               <div style={{ position: 'absolute', bottom: '24px', left: '24px', right: '24px', color: 'white' }}>
@@ -96,7 +96,7 @@ export function TemplateRenderer({
       {/* 4. Luxury (Starter) - Hero left, Grid right */}
       {templateId === "4" && (
         <div style={{ display: 'flex', flexDirection: device === 'Mobile' ? 'column' : 'row', gap: '24px' }}>
-          <div style={{ flex: 1.2, height: device === 'Mobile' ? '300px' : '524px', borderRadius: `${cardRadius}px`, background: template.gradient, position: 'relative', overflow: 'hidden', boxShadow: shadowStyle }}>
+          <div style={{ flex: 1.2, height: device === 'Mobile' ? '300px' : '524px', borderRadius: `${cardRadius}px`, background: template.gradient, position: 'relative', overflow: 'hidden', boxShadow: shadowStyle, border: borderStyle }}>
             <div style={{ position: 'absolute', bottom: '40px', left: '40px', color: 'white' }}>
               <h2 style={{ margin: '0 0 16px 0', fontSize: '36px', fontWeight: 300, letterSpacing: '2px' }}>LUXURY<br/>EDITION</h2>
               <button style={{ background: 'transparent', color: 'white', border: '1px solid white', padding: '12px 32px', letterSpacing: '1px' }}>EXPLORE</button>
@@ -104,7 +104,7 @@ export function TemplateRenderer({
           </div>
           <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
             {mockProducts.slice(0, 4).map((item) => (
-              <div key={item} style={{ display: 'flex', flexDirection: 'column' }}>
+              <div key={item} className={hoverClass} style={{ display: 'flex', flexDirection: 'column' }}>
                 <div style={{ height: '200px', background: '#f3f4f6', borderRadius: `${cardRadius}px`, marginBottom: '16px' }}></div>
                 <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 400, letterSpacing: '1px' }}>Signature Item {item}</h4>
                 <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>$350.00</p>
@@ -118,8 +118,8 @@ export function TemplateRenderer({
       {templateId === "5" && (
         <div style={{ display: 'grid', gridTemplateColumns: gridColumns, gap: '24px', alignItems: 'start' }}>
           {mockProducts.map((item, index) => (
-            <div key={item} style={{ marginTop: index % 2 !== 0 && device !== 'Mobile' ? '40px' : '0' }}>
-              <div style={{ height: index % 2 === 0 ? '400px' : '320px', background: template.gradient, borderRadius: `${cardRadius}px`, marginBottom: '20px', boxShadow: shadowStyle }}></div>
+            <div key={item} className={hoverClass} style={{ marginTop: index % 2 !== 0 && device !== 'Mobile' ? '40px' : '0' }}>
+              <div style={{ height: index % 2 === 0 ? '400px' : '320px', background: template.gradient, borderRadius: `${cardRadius}px`, marginBottom: '20px', boxShadow: shadowStyle, border: borderStyle }}></div>
               <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 700, fontFamily: 'serif' }}>The Editorial #{item}</h3>
               <p style={{ margin: '0 0 16px 0', color: '#666', lineHeight: '1.5' }}>A fresh perspective on modern aesthetics.</p>
               <span style={{ fontSize: '14px', fontWeight: 600, borderBottom: '1px solid black', paddingBottom: '2px', cursor: 'pointer' }}>DISCOVER</span>
@@ -136,7 +136,7 @@ export function TemplateRenderer({
           </div>
           <div style={{ flex: 1, display: 'grid', gridTemplateColumns: device === 'Mobile' ? '1fr' : '1fr 1fr', gap: '16px' }}>
             {mockProducts.slice(0, 4).map((item) => (
-              <div key={item} style={{ backgroundColor: '#f8f9fa', borderRadius: `${cardRadius}px`, boxShadow: shadowStyle, padding: '16px', display: 'flex', flexDirection: 'column' }}>
+              <div key={item} className={hoverClass} style={{ backgroundColor: '#f8f9fa', borderRadius: `${cardRadius}px`, boxShadow: shadowStyle, padding: '16px', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ height: '150px', backgroundColor: '#e9ecef', borderRadius: `${cardRadius - 4}px`, marginBottom: '12px' }}></div>
                 <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: 600 }}>Split Edition {item}</h4>
                 <p style={{ margin: '0 0 12px 0', color: '#666', fontSize: '12px' }}>$89.99</p>
@@ -151,11 +151,11 @@ export function TemplateRenderer({
       {templateId === "7" && (
         <div style={{ display: 'grid', gridTemplateColumns: gridColumns, gap: '32px', padding: '16px' }}>
           {mockProducts.map((item) => (
-            <div key={item} style={{ 
+            <div key={item} className={hoverClass} style={{ 
               backgroundColor: 'white', 
               borderRadius: `${cardRadius}px`, 
               padding: '20px',
-              boxShadow: '20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff',
+              boxShadow: shadowStyle, border: borderStyle,
               display: 'flex', flexDirection: 'column', alignItems: 'center'
             }}>
               <div style={{ height: '220px', width: '100%', borderRadius: `${Math.max(0, cardRadius - 8)}px`, background: template.gradient, marginBottom: '24px' }}></div>
@@ -171,7 +171,7 @@ export function TemplateRenderer({
       {templateId === "8" && (
         <div style={{ display: 'flex', gap: '24px', overflowX: 'auto', paddingBottom: '20px' }}>
           {mockProducts.map((item) => (
-            <div key={item} style={{ flexShrink: 0, width: device === 'Mobile' ? '280px' : '350px', backgroundColor: 'white', borderRadius: `${cardRadius}px`, boxShadow: shadowStyle, border: borderStyle }}>
+            <div key={item} className={hoverClass} style={{ flexShrink: 0, width: device === 'Mobile' ? '280px' : '350px', backgroundColor: 'white', borderRadius: `${cardRadius}px`, boxShadow: shadowStyle, border: borderStyle }}>
               <div style={{ height: '400px', background: template.gradient, borderRadius: `${cardRadius}px ${cardRadius}px 0 0` }}></div>
               <div style={{ padding: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
@@ -191,10 +191,11 @@ export function TemplateRenderer({
       {templateId === "9" && (
         <div style={{ display: 'grid', gridTemplateColumns: device === 'Mobile' ? '1fr' : '1fr 1fr 1fr', gap: '16px' }}>
           {mockProducts.map((item, index) => (
-            <div key={item} style={{ 
+            <div key={item} className={hoverClass} style={{ 
               position: 'relative',
               borderRadius: `${cardRadius}px`, 
               boxShadow: shadowStyle, 
+              border: borderStyle,
               overflow: 'hidden',
               gridRow: index % 3 === 0 ? 'span 2' : 'span 1',
               height: index % 3 === 0 ? '500px' : '242px',
@@ -216,7 +217,7 @@ export function TemplateRenderer({
       {templateId === "10" && (
         <div style={{ backgroundColor: '#0f172a', padding: '40px 24px', borderRadius: '24px', display: 'grid', gridTemplateColumns: gridColumns, gap: '24px' }}>
           {mockProducts.map((item) => (
-            <div key={item} style={{ backgroundColor: '#1e293b', borderRadius: `${cardRadius}px`, border: '1px solid #334155', overflow: 'hidden', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)' }}>
+            <div key={item} className={hoverClass} style={{ backgroundColor: '#1e293b', borderRadius: `${cardRadius}px`, border: borderStyle !== 'none' ? borderStyle : '1px solid #334155', overflow: 'hidden', boxShadow: shadowStyle }}>
               <div style={{ height: '260px', background: template.gradient, opacity: 0.85 }}></div>
               <div style={{ padding: '24px' }}>
                 <h3 style={{ margin: '0 0 12px 0', fontSize: '18px', fontWeight: 600, color: 'white' }}>Night Collection {item}</h3>
@@ -234,7 +235,7 @@ export function TemplateRenderer({
       {templateId === "11" && (
         <div style={{ columnCount: device === 'Mobile' ? 1 : device === 'Tablet' ? 2 : 3, columnGap: '20px' }}>
           {mockProducts.map((item, index) => (
-            <div key={item} style={{ 
+            <div key={item} className={hoverClass} style={{ 
               breakInside: 'avoid', 
               marginBottom: '20px', 
               backgroundColor: 'white', 
@@ -286,7 +287,7 @@ export function TemplateRenderer({
       {templateId === "13" && (
         <div style={{ display: 'grid', gridTemplateColumns: gridColumns, gap: '40px' }}>
           {mockProducts.map((item) => (
-            <div key={item} style={{ textAlign: 'center', padding: '16px', border: '1px solid #e5e5e5' }}>
+            <div key={item} className={hoverClass} style={{ textAlign: 'center', padding: '16px', border: borderStyle !== 'none' ? borderStyle : '1px solid #e5e5e5', borderRadius: `${cardRadius}px`, boxShadow: shadowStyle }}>
               <div style={{ height: '350px', background: template.gradient, marginBottom: '24px' }}></div>
               <h3 style={{ margin: '0 0 12px 0', fontSize: '22px', fontWeight: 400, fontFamily: 'serif', letterSpacing: '1px', color: '#111' }}>Boutique Item {item}</h3>
               <p style={{ margin: '0 0 20px 0', color: '#555', fontSize: '14px', letterSpacing: '2px' }}>$250.00</p>
@@ -300,7 +301,7 @@ export function TemplateRenderer({
       {templateId === "14" && (
         <div style={{ display: 'grid', gridTemplateColumns: gridColumns, gap: '24px', backgroundColor: '#fffbe8', padding: '24px', border: '4px solid black' }}>
           {mockProducts.map((item) => (
-            <div key={item} style={{ backgroundColor: 'white', border: '3px solid black', boxShadow: '8px 8px 0px 0px rgba(0,0,0,1)' }}>
+            <div key={item} className={hoverClass} style={{ backgroundColor: 'white', border: borderStyle !== 'none' ? borderStyle : '3px solid black', boxShadow: shadowStyle !== 'none' ? shadowStyle : '8px 8px 0px 0px rgba(0,0,0,1)', borderRadius: `${cardRadius}px` }}>
               <div style={{ height: '240px', background: template.gradient, borderBottom: '3px solid black' }}></div>
               <div style={{ padding: '20px' }}>
                 <h3 style={{ margin: '0 0 8px 0', fontSize: '24px', fontWeight: 900, textTransform: 'uppercase' }}>BOLD {item}</h3>
