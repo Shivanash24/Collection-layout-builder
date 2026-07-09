@@ -107,8 +107,9 @@ export default function Customize() {
   };
 
   // Plan Feature Checks
-  const canUseShadows = currentPlan === "Professional" || currentPlan === "Premium";
-  const canUseAnimations = currentPlan === "Premium";
+  const normalizedPlan = currentPlan.replace(" Plan", "");
+  const canUseShadows = normalizedPlan === "Professional" || normalizedPlan === "Premium";
+  const canUseAnimations = normalizedPlan === "Premium";
 
   return (
     <div style={{ display: 'flex', gap: '32px', height: 'calc(100vh - 128px)' }}>
