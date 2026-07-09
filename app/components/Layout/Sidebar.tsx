@@ -1,6 +1,7 @@
-import { NavLink } from "@remix-run/react";
+import { NavLink, useNavigate } from "@remix-run/react";
 
 export function Sidebar() {
+  const navigate = useNavigate();
   const menuItems = [
     { label: "Dashboard", href: "/app" },
     { label: "Templates", href: "/app/templates" },
@@ -57,7 +58,7 @@ export function Sidebar() {
       <div className="premium-card" style={{ padding: '16px', marginTop: 'auto', backgroundColor: '#F8F9FD' }}>
         <h4 style={{ fontSize: '14px', margin: '0 0 4px 0', color: 'var(--color-text)' }}>Starter Plan</h4>
         <p style={{ fontSize: '12px', color: 'var(--color-secondary-text)', margin: '0 0 12px 0' }}>15 Layouts Available</p>
-        <button className="premium-button" style={{ width: '100%' }}>Upgrade Plan</button>
+        <button className="premium-button" style={{ width: '100%' }} onClick={() => navigate('/app/billing')}>Upgrade Plan</button>
       </div>
     </aside>
   );
