@@ -14,7 +14,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const activePlan = storeSettings?.activePlan || "Free";
   const activeTemplateId = storeSettings?.templateId || "1";
   
-  return json({ storeName: "My Awesome Store", activePlan, activeTemplateId });
+  return json({ storeName: "Collection Builder Pro", activePlan, activeTemplateId });
 };
 
 export default function Dashboard() {
@@ -128,7 +128,7 @@ export default function Dashboard() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '40px', backgroundColor: 'white', padding: '32px', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
           <div style={{ width: '64px', height: '64px', borderRadius: '16px', backgroundColor: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--color-border)', overflow: 'hidden' }}>
-            <img src="/favicon.ico" alt="App Logo" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
+            <img src="/collection%20buildeer%20icon.jpg" alt="App Logo" style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '8px' }} />
           </div>
           <div>
             <h2 style={{ fontSize: '28px', fontWeight: 800, margin: '0 0 8px 0', color: 'var(--color-text)' }}>Welcome back, {storeName}</h2>
@@ -142,9 +142,7 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-        <button className="premium-button" style={{ padding: '12px 24px', fontSize: '15px' }} onClick={() => navigate("/app/templates")}>
-          + Create New Layout
-        </button>
+
       </div>
 
       <h3 style={{ fontSize: '20px', fontWeight: 700, margin: '0 0 20px 0' }}>Your Collections</h3>
