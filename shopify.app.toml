@@ -29,3 +29,8 @@ redirect_urls = [
 
 [build]
 automatically_update_urls_on_dev = true
+
+[app_proxy]
+url = "https://collection-layout-builder.vercel.app/api/storefront"
+subpath = "collection-builder"
+prefix = "apps"
