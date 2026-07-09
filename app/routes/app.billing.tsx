@@ -266,26 +266,7 @@ export default function Billing() {
         })}
       </div>
 
-      <div className="premium-card" style={{ padding: '32px' }}>
-        <h3 style={{ margin: '0 0 24px 0', fontSize: '18px' }}>Invoice History</h3>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-          <thead>
-            <tr style={{ borderBottom: '1px solid var(--color-border)', color: 'var(--color-secondary-text)' }}>
-              <th style={{ padding: '12px 0', fontWeight: 600 }}>Date</th>
-              <th style={{ padding: '12px 0', fontWeight: 600 }}>Amount</th>
-              <th style={{ padding: '12px 0', fontWeight: 600 }}>Status</th>
-              <th style={{ padding: '12px 0', fontWeight: 600, textAlign: 'right' }}>Invoice</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td colSpan={4} style={{ padding: '24px', textAlign: 'center', color: 'var(--color-secondary-text)' }}>
-                You can view detailed invoices in your Shopify admin settings.
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+
     </div>
   );
 }
