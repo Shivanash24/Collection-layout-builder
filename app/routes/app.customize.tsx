@@ -243,6 +243,7 @@ export default function Customize() {
               cardShadow={cardShadow}
               getGridColumns={getGridColumns()}
               device={device}
+              hoverAnimation={hoverAnimation}
             />
           </div>
         </div>

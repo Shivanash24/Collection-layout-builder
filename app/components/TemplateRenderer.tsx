@@ -13,7 +13,8 @@ export function TemplateRenderer({
   cardRadius: number, 
   cardShadow: string, 
   getGridColumns?: string, 
-  device?: string 
+  device?: string,
+  hoverAnimation?: string
 }) {
   const templateId = template.id;
   
@@ -22,14 +23,27 @@ export function TemplateRenderer({
   const shadowStyle = cardShadow === 'None' ? 'none' : cardShadow === 'Soft' ? '0 4px 6px -1px rgba(0, 0, 0, 0.05)' : cardShadow === 'Medium' ? '0 10px 15px -3px rgba(0, 0, 0, 0.1)' : cardShadow === 'Hard' ? '0 20px 25px -5px rgba(0, 0, 0, 0.2)' : '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
   const borderStyle = cardShadow === 'None' ? '1px solid var(--color-border)' : 'none';
 
+  let hoverClass = "";
+  if (hoverAnimation === "Scale Up") hoverClass = "hover-scale";
+  if (hoverAnimation === "Fade In") hoverClass = "hover-fade";
+  if (hoverAnimation === "3D Flip") hoverClass = "hover-flip";
+
   return (
     <div style={{ width: '100%', transition: 'all 0.3s ease' }}>
+      <style dangerouslySetInnerHTML={{__html: `
+        .hover-scale { transition: transform 0.3s ease; }
+        .hover-scale:hover { transform: scale(1.05); z-index: 10; }
+        .hover-fade { transition: opacity 0.3s ease; }
+        .hover-fade:hover { opacity: 0.75; }
+        .hover-flip { transition: transform 0.5s ease; transform-style: preserve-3d; }
+        .hover-flip:hover { transform: rotateY(15deg) scale(1.02); z-index: 10; }
+      `}} />
       
       {/* 1. Classic Grid (Free) */}
       {templateId === "1" && (
         <div style={{ display: 'grid', gridTemplateColumns: gridColumns, gap: '24px' }}>
           {mockProducts.map((item) => (
-            <div key={item} style={{ backgroundColor: 'white', borderRadius: `${cardRadius}px`, boxShadow: shadowStyle, border: borderStyle, overflow: 'hidden' }}>
+            <div key={item} className={hoverClass} style={{ backgroundColor: 'white', borderRadius: `${cardRadius}px`, boxShadow: shadowStyle, border: borderStyle, overflow: 'hidden' }}>
               <div style={{ height: '250px', background: template.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700 }}>Image</div>
               <div style={{ padding: '20px', textAlign: 'center' }}>
                 <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 600 }}>{template.name} {item}</h3>
@@ -301,9 +315,9 @@ export function TemplateRenderer({
 
       {/* 15. Minimal Premium (Premium) - Ultra clean overlay */}
       {templateId === "15" && (
-        <div style={{ display: 'grid', gridTemplateColumns: gridColumns, gap: '2px', backgroundColor: '#f1f1f1', padding: '2px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: gridColumns, gap: '20px', backgroundColor: 'transparent', padding: '10px' }}>
           {mockProducts.map((item) => (
-            <div key={item} style={{ position: 'relative', height: '450px', backgroundColor: 'white', overflow: 'hidden', group: 'hover' }}>
+            <div key={item} className={hoverClass} style={{ position: 'relative', height: '450px', backgroundColor: 'white', overflow: 'hidden', borderRadius: `${cardRadius}px`, boxShadow: shadowStyle, border: borderStyle }}>
               <div style={{ position: 'absolute', inset: 0, background: template.gradient, opacity: 0.9 }}></div>
               <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', opacity: 0, transition: 'opacity 0.3s ease', backgroundColor: 'rgba(255,255,255,0.95)', padding: '32px', textAlign: 'center' }} 
                    onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
