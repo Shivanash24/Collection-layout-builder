@@ -6,7 +6,8 @@ export function TemplateRenderer({
   cardRadius, 
   cardShadow, 
   getGridColumns, 
-  device = "Desktop" 
+  device = "Desktop",
+  hoverAnimation
 }: { 
   template: any, 
   mockProducts: number[], 
